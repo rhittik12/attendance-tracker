@@ -1,44 +1,29 @@
 {
-  "name": "attendance-tracking-client",
-  "private": true,
-  "version": "0.1.0",
-  "type": "module",
+  "name": "attendance-tracking",
+  "version": "1.0.0",
+  "description": "A modern attendance tracking application with real-time features",
+  "main": "index.js",
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "npm run dev --workspace=client",
+    "dev:server": "npm run dev --workspace=server",
+    "build": "npm run build --workspace=client && npm run build --workspace=server",
+    "start": "npm run start --workspace=server"
   },
-  "dependencies": {
-  "@clerk/clerk-react": "^5.0.0",
-    "@headlessui/react": "^1.7.15",
-    "@heroicons/react": "^2.0.18",
-    "axios": "^1.4.0",
-    "chart.js": "^4.3.0",
-    "date-fns": "^2.30.0",
-    "react": "^18.2.0",
-    "react-chartjs-2": "^5.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.45.1",
-    "react-hot-toast": "^2.4.1",
-    "react-query": "^3.39.3",
-    "react-router-dom": "^6.14.1",
-    "socket.io-client": "^4.7.1",
-    "zod": "^3.21.4"
-  },
+  "keywords": [
+    "attendance",
+    "tracking",
+    "real-time",
+    "react",
+    "node"
+  ],
+  "author": "",
+  "license": "MIT",
   "devDependencies": {
-    "@types/react": "^18.2.14",
-    "@types/react-dom": "^18.2.6",
-    "@typescript-eslint/eslint-plugin": "^5.61.0",
-    "@typescript-eslint/parser": "^5.61.0",
-    "@vitejs/plugin-react": "^4.0.1",
-    "autoprefixer": "^10.4.14",
-    "eslint": "^8.44.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-react-refresh": "^0.4.1",
-    "postcss": "^8.4.25",
-    "tailwindcss": "^3.3.2",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.0"
+    "concurrently": "^8.2.0"
   }
 }
