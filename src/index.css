@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter var', system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-600 text-white hover:bg-secondary-700 focus:ring-secondary-500;
+  }
+  
+  .btn-outline {
+    @apply border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-primary-500;
+  }
+  
+  .input {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden;
+  }
+}
+
+/* 3D cube styles */
+.r3d-scene {
+  width: max-content;
+  height: max-content;
+}
+
+.r3d-cube {
+  position: relative;
+  transform-style: preserve-3d;
+  animation: r3d-rotate linear infinite;
+}
+
+.r3d-face {
+  position: absolute;
+  display: block;
+  background-image: linear-gradient(var(--tw-gradient-stops));
+  --tw-gradient-from: rgb(125 211 252 / 1) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(56 189 248 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+@keyframes r3d-rotate {
+  0% { transform: rotateX(-15deg) rotateY(0deg); }
+  50% { transform: rotateX(15deg) rotateY(180deg); }
+  100% { transform: rotateX(-15deg) rotateY(360deg); }
+}
