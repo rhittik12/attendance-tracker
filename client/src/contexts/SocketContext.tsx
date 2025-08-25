@@ -38,8 +38,20 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       return
     }
 
-  // Prefer explicit socket URL if provided, else same-origin
-  const url = (import.meta as any).env?.VITE_SOCKET_URL || undefined
+  // Resolve socket URL: VITE_ -> NEXT_PUBLIC_ -> localStorage -> ?ws= -> same-origin
+  function resolveSocketUrl(): string | undefined {
+    const vite = (import.meta as any).env?.VITE_SOCKET_URL as string | undefined
+    if (vite && vite.length > 0) return vite
+    try { if (typeof __NEXT_PUBLIC_SOCKET_URL__ === 'string' && __NEXT_PUBLIC_SOCKET_URL__.length > 0) return __NEXT_PUBLIC_SOCKET_URL__ } catch {}
+    try { const saved = localStorage.getItem('SOCKET_URL'); if (saved) return saved } catch {}
+    try {
+      const url = new URL(window.location.href)
+      const p = url.searchParams.get('ws') || undefined
+      if (p) { localStorage.setItem('SOCKET_URL', p); url.searchParams.delete('ws'); window.history.replaceState({}, document.title, url.toString()); return p }
+    } catch {}
+    return undefined
+  }
+  const url = resolveSocketUrl()
   const newSocket = io(url || '/', {
       auth: async (cb: any) => {
         const t = (await getToken()) || token

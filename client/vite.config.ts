@@ -10,6 +10,8 @@ export default defineConfig({
   define: {
   // Expose NEXT_PUBLIC_ fallback as a global for client code
   __NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY__: JSON.stringify(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ''),
+  __NEXT_PUBLIC_API_URL__: JSON.stringify(process.env.NEXT_PUBLIC_API_URL || ''),
+  __NEXT_PUBLIC_SOCKET_URL__: JSON.stringify(process.env.NEXT_PUBLIC_SOCKET_URL || ''),
   },
   resolve: {
     alias: {

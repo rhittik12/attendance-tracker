@@ -48,8 +48,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const loadUser = async () => {
       if (!isLoaded || !isUserLoaded) return
       try {
-  // Configure axios base URL for production (Vercel) or dev (empty => proxy)
-  const base = (import.meta as any).env?.VITE_API_URL || ''
+  // Configure axios base URL (priority: VITE_ -> NEXT_PUBLIC_ -> localStorage -> ?api=)
+  function resolveApiBase(): string {
+    const vite = (import.meta as any).env?.VITE_API_URL as string | undefined
+    if (vite && vite.length > 0) return vite
+    try { if (typeof __NEXT_PUBLIC_API_URL__ === 'string' && __NEXT_PUBLIC_API_URL__.length > 0) return __NEXT_PUBLIC_API_URL__ } catch {}
+    try { const saved = localStorage.getItem('API_URL'); if (saved) return saved } catch {}
+    try {
+      const url = new URL(window.location.href)
+      const p = url.searchParams.get('api') || undefined
+      if (p) { localStorage.setItem('API_URL', p); url.searchParams.delete('api'); window.history.replaceState({}, document.title, url.toString()); return p }
+    } catch {}
+    return ''
+  }
+  const base = resolveApiBase()
   axios.defaults.baseURL = base
         if (!isSignedIn) {
           setUser(null)

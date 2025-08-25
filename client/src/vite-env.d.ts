@@ -10,3 +10,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+// Globals injected via Vite define()
+declare const __NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY__: string
+declare const __NEXT_PUBLIC_API_URL__: string
+declare const __NEXT_PUBLIC_SOCKET_URL__: string
