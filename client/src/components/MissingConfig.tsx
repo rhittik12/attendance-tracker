@@ -23,6 +23,8 @@ export default function MissingConfig({ missing }: Props) {
           <p className="mt-2">
             Minimum required:
             <code className="px-1">VITE_CLERK_PUBLISHABLE_KEY</code>
+            or
+            <code className="px-1">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code>
           </p>
           <p>Recommended:
             <code className="px-1">VITE_API_URL</code> and optional <code className="px-1">VITE_SOCKET_URL</code>

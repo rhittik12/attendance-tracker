@@ -18,7 +18,8 @@ const queryClient = new QueryClient({
   },
 })
 
-const clerkPubKey = (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY
+declare const __NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY__: string
+const clerkPubKey = (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY || __NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY__
 
 const root = document.getElementById('root')!
 

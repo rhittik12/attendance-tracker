@@ -7,6 +7,10 @@ const API_PORT = Number(process.env.VITE_API_PORT || 5060)
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+  // Expose NEXT_PUBLIC_ fallback as a global for client code
+  __NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY__: JSON.stringify(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ''),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
