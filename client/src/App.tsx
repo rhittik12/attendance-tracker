@@ -39,6 +39,7 @@ function App() {
       <SocketProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/login/*" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="/dashboard" replace />} />

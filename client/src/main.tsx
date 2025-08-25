@@ -1,13 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import ClerkWithRouter from './components/ClerkWithRouter'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from './contexts/ThemeContext'
-import App from './App.tsx'
+import SimpleApp from './SimpleApp'
 import './index.css'
-import MissingConfig from './components/MissingConfig'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,25 +54,19 @@ const clerkPubKey = getClerkPublishableKey()
 
 const root = document.getElementById('root')!
 
-if (!clerkPubKey) {
-  ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-      <MissingConfig missing={["VITE_CLERK_PUBLISHABLE_KEY"]} />
-    </React.StrictMode>,
-  )
-} else {
-  ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <ClerkWithRouter publishableKey={clerkPubKey}>
-          <ThemeProvider>
-            <QueryClientProvider client={queryClient}>
-              <App />
-              <Toaster position="top-right" />
-            </QueryClientProvider>
-          </ThemeProvider>
-        </ClerkWithRouter>
-      </BrowserRouter>
-    </React.StrictMode>,
-  )
-}
+// Temporary: Skip Clerk for now to debug blank page
+console.log('Clerk key found:', !!clerkPubKey)
+console.log('Starting app...')
+
+ReactDOM.createRoot(root).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <SimpleApp />
+          <Toaster position="top-right" />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+)

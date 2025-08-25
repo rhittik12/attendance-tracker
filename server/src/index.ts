@@ -48,15 +48,18 @@ const io = new Server(server, {
 // Connect to MongoDB with retry and friendly diagnostics
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/attendance-tracker'
 const DB_RETRY_DELAY_MS = parseInt(process.env.DB_RETRY_DELAY_MS || '5000', 10)
-const DB_MAX_ATTEMPTS = parseInt(process.env.DB_MAX_ATTEMPTS || '0', 10) // 0 = keep retrying
+const DB_MAX_ATTEMPTS = parseInt(process.env.DB_MAX_ATTEMPTS || '5', 10) // Limit retries
 
 let dbAttempts = 0
+let isDbConnected = false
+
 const connectMongo = async (): Promise<void> => {
   try {
     await mongoose.connect(MONGODB_URI, {
       serverSelectionTimeoutMS: 8000,
     } as any)
     console.log('Connected to MongoDB')
+    isDbConnected = true
   } catch (err: any) {
     dbAttempts += 1
     const hostHint = (() => {
@@ -70,7 +73,8 @@ const connectMongo = async (): Promise<void> => {
       err?.message || err
     )
     if (DB_MAX_ATTEMPTS > 0 && dbAttempts >= DB_MAX_ATTEMPTS) {
-      console.error('Max DB connection attempts reached. Check Atlas IP allow list, credentials, and URI.')
+      console.error('Max DB connection attempts reached. Server will run in fallback mode.')
+      isDbConnected = false
       return
     }
     console.warn(`Retrying MongoDB connection in ${DB_RETRY_DELAY_MS}ms... (attempt ${dbAttempts})`)
@@ -126,6 +130,33 @@ io.on('connection', (socket) => {
   })
 })
 
+// Fallback API routes when database is not available
+app.get('/api/demo/stats', (_req, res) => {
+  res.json({
+    totalStudents: 25,
+    presentToday: 22,
+    attendanceRate: 88,
+    recentActivity: [
+      { student: 'John Doe', action: 'marked present', time: '2 min ago' },
+      { student: 'Jane Smith', action: 'marked present', time: '5 min ago' },
+      { student: 'Mike Johnson', action: 'marked late', time: '8 min ago' }
+    ]
+  })
+})
+
+// Enhanced health check
+app.get('/health', (_req, res) => {
+  const state = ['disconnected', 'connected', 'connecting', 'disconnecting'][
+    mongoose.connection.readyState as 0 | 1 | 2 | 3
+  ]
+  res.json({ 
+    ok: true, 
+    dbState: state,
+    dbConnected: isDbConnected,
+    timestamp: new Date().toISOString()
+  })
+})
+
 // Error handling middleware
 app.use(errorHandler)
 
@@ -137,7 +168,12 @@ app.get('/health', (_req, res) => {
   const state = ['disconnected', 'connected', 'connecting', 'disconnecting'][
     mongoose.connection.readyState as 0 | 1 | 2 | 3
   ]
-  res.json({ ok: true, dbState: state })
+  res.json({ 
+    ok: true, 
+    dbState: state,
+    dbConnected: isDbConnected,
+    timestamp: new Date().toISOString()
+  })
 })
 
 ;(async () => {
