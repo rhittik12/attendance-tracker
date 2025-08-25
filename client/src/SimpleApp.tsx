@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import React, { useState, useEffect, useMemo } from 'react'
+import { Routes, Route, Link } from 'react-router-dom'
 
 // Types
 interface Student {
@@ -80,7 +80,8 @@ function Dashboard() {
   // Force re-render when data changes
   const refresh = () => setRefreshKey(prev => prev + 1)
   
-  const stats = getAttendanceStats()
+  // Use refreshKey to ensure stats are recalculated when data changes
+  const stats = useMemo(() => getAttendanceStats(), [refreshKey])
   
   const handleQuickAttendance = (status: 'Present' | 'Absent') => {
     // Mark a random absent student as present, or first present as absent
@@ -170,6 +171,9 @@ function Students() {
   const [newStudent, setNewStudent] = useState<{ name: string; email: string; status: 'Present' | 'Absent' | 'Late' }>({ name: '', email: '', status: 'Present' })
   
   const refresh = () => setRefreshKey(prev => prev + 1)
+  
+  // Force component to re-render when refreshKey changes
+  const students = useMemo(() => [...globalStudents], [refreshKey])
   
   const handleEdit = (student: Student) => {
     setEditingStudent(student)
@@ -282,7 +286,7 @@ function Students() {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {globalStudents.map((student) => (
+            {students.map((student) => (
               <tr key={student.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {editingStudent?.id === student.id ? (
@@ -360,7 +364,7 @@ function Students() {
           </tbody>
         </table>
         
-        {globalStudents.length === 0 && (
+        {students.length === 0 && (
           <div className="text-center py-8">
             <p className="text-gray-500">No students found. Add a student to get started!</p>
           </div>
