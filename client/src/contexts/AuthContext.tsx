@@ -48,6 +48,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const loadUser = async () => {
       if (!isLoaded || !isUserLoaded) return
       try {
+  // Configure axios base URL for production (Vercel) or dev (empty => proxy)
+  const base = (import.meta as any).env?.VITE_API_URL || ''
+  axios.defaults.baseURL = base
         if (!isSignedIn) {
           setUser(null)
           setToken(null)
@@ -65,7 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
         setToken(t)
         axios.defaults.headers.common['Authorization'] = `Bearer ${t}`
-        const res = await axios.get('/api/auth/me', {
+  const res = await axios.get('/api/auth/me', {
           headers: { Authorization: `Bearer ${t}` },
         })
         setUser(res.data.user)

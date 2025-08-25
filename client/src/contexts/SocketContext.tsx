@@ -38,8 +38,9 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       return
     }
 
-  // Connect to same origin so Vite proxy forwards to server (ws enabled)
-  const newSocket = io('/', {
+  // Prefer explicit socket URL if provided, else same-origin
+  const url = (import.meta as any).env?.VITE_SOCKET_URL || undefined
+  const newSocket = io(url || '/', {
       auth: async (cb: any) => {
         const t = (await getToken()) || token
         cb({ token: t })
