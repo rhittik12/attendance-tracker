@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast'
 import { ThemeProvider } from './contexts/ThemeContext'
 import App from './App.tsx'
 import './index.css'
+import MissingConfig from './components/MissingConfig'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,17 +20,27 @@ const queryClient = new QueryClient({
 
 const clerkPubKey = (import.meta as any).env?.VITE_CLERK_PUBLISHABLE_KEY
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <ThemeProvider>
-        <BrowserRouter>
-          <QueryClientProvider client={queryClient}>
-            <App />
-            <Toaster position="top-right" />
-          </QueryClientProvider>
-        </BrowserRouter>
-      </ThemeProvider>
-    </ClerkProvider>
-  </React.StrictMode>,
-)
+const root = document.getElementById('root')!
+
+if (!clerkPubKey) {
+  ReactDOM.createRoot(root).render(
+    <React.StrictMode>
+      <MissingConfig missing={["VITE_CLERK_PUBLISHABLE_KEY"]} />
+    </React.StrictMode>,
+  )
+} else {
+  ReactDOM.createRoot(root).render(
+    <React.StrictMode>
+      <ClerkProvider publishableKey={clerkPubKey}>
+        <ThemeProvider>
+          <BrowserRouter>
+            <QueryClientProvider client={queryClient}>
+              <App />
+              <Toaster position="top-right" />
+            </QueryClientProvider>
+          </BrowserRouter>
+        </ThemeProvider>
+      </ClerkProvider>
+    </React.StrictMode>,
+  )
+}
