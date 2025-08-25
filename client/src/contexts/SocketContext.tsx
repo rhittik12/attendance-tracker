@@ -60,7 +60,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
       setIsConnected(false)
     })
 
-    newSocket.on('error', (error) => {
+  newSocket.on('error', (error: any) => {
       console.error('Socket error:', error)
     })
 
